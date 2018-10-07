@@ -20,7 +20,7 @@ int main () {
 
 /*
    Reads input from stdin, formatting it to contain no space 
-   characters [' ' , '\n' , '\t'] and stores it in a string.
+   or tab characters and stores it in a string.
    Return:
       char * - string with input
 */
@@ -30,8 +30,7 @@ char *getInput () {
 	int i = 0;
 
 	while ((c = fgetc(stdin)) != EOF) {
-		if (isspace(c)) continue;
-		if (i == 6) input[i++] = '!';	//separates the first 6 characters (which will be later used for precedence list) from the rest of input
+		if (c == '\t' || c == ' ') continue;
 		input[i++] = c;
 	}
 
