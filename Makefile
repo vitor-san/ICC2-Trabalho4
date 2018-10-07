@@ -1,14 +1,5 @@
-CC = gcc
-DEPS = stack.h
-OBJ = stack.c calculator.c
+all:
+	gcc -o calculator stack.c calculator.c
 
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $<
-
-calculator: $(OBJ)
-	$(CC) -o $@ $^
-
-.PHONY: clean
-
-clean:
-	rm *.o
+run:
+	./calculator
