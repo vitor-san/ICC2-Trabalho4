@@ -8,10 +8,13 @@
 #define DEBUG_MODE 1
 
 char *getInput();
+void simplifyPower(char *input);
 
 int main () {
 	char *input = getInput();
-	
+	simplifyPower(input);
+	puts(input);	//don't fuck with that!!
+
 	return 0;
 }
 
@@ -28,6 +31,7 @@ char *getInput () {
 
 	while ((c = fgetc(stdin)) != EOF) {
 		if (isspace(c)) continue;
+		if (i == 6) input[i++] = '!';	//separates the first 6 characters (which will be later used for precedence list) from the rest of input
 		input[i++] = c;
 	}
 
@@ -35,4 +39,22 @@ char *getInput () {
 	input[strlen(input)] = '\0';
 
 	return input;
+}
+
+void simplifyPower (char *input) {
+	int prevPos = -2;
+
+	for (int i = 0; i < strlen(input); i++) {
+		if (input[i] == '*' && (prevPos+1 == i)) {
+			input[i-1] = '^';
+			input[i] = ' ';
+			continue;
+		}
+
+		if (input[i] == '*') {
+			prevPos = i;
+		}
+	}
+
+	return;
 }
