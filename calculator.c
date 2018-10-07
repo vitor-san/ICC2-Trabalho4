@@ -19,10 +19,10 @@ int main () {
 }
 
 /*
-   Reads input from stdin, formatting it to contain no space 
-   or tab characters and stores it in a string.
-   Return:
-      char * - string with input
+	Reads input from stdin, formatting it to contain no space 
+	or tab characters and stores it in a string.
+	Return:
+		char * - string with input
 */
 char *getInput () {
 	char c;
@@ -40,6 +40,11 @@ char *getInput () {
 	return input;
 }
 
+/*
+	Change all "**" in input to "^ ".
+	Parameter:
+		char *input - string to be treated
+*/
 void simplifyPower (char *input) {
 	int prevPos = -2;
 
