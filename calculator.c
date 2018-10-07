@@ -6,8 +6,25 @@
 
 #define DEBUG_MODE 1
 
-int main () {
-	
+char *getInput();
 
+int main () {
+	char *input = getInput();
+	puts(input);
 	return 0;
+}
+
+char *getInput () {
+	char c;
+	char *input = malloc(1024*sizeof(char));
+	int i = 0;
+
+	while ((c = fgetc(stdin)) != EOF) {
+		if (c == '\t' || c == '\n') continue;
+		input[i++] = c;
+	}
+
+	input[strlen(input)] = '\0';
+
+	return input;
 }
