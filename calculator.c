@@ -8,19 +8,21 @@
 #define DEBUG_MODE 1
 
 char *getInput();
-void simplifyPower(char *input);
+void simplify(char *input);
 char *getPrecende(char *input);
 int countCommas(char *input);
 char **getExpressions(char *input, int *number);
-void convertRPN(char **expressions, int number; char *precedence);
+void convertRPN(char **expressions, int number, char *precedence);
 void shuntingYard(char *expression, char* precedence);
 
 
 int main () {
 	int nbrExp = 0;
 	char *input = getInput();
-	simplifyPower(input);
+	simplify(input);
+	if (DEBUG_MODE) puts(input);
 	char *precedence = getPrecende(input);
+	if (DEBUG_MODE) puts(precedence);
 	char **expression = getExpressions(input, &nbrExp);
 	convertRPN(expression, nbrExp, precedence);
 
@@ -52,21 +54,33 @@ char *getInput () {
 }
 
 /*
-	Change all "**" in input to "^ ".
+	Changes all "**" in input to "^ ", all 
+	"log" to "l", "exp" to "e" and "sqrt" to "s".
 	Parameter:
 		char *input - string to be treated
 */
-void simplifyPower (char *input) {
+void simplify (char *input) {
 	int prevPos = -2;
 
 	for (int i = 0; i < strlen(input); i++) {
-		if (input[i] == '*' && (prevPos+1 == i)) {
-			input[i-1] = '^';
-			input[i] = ' ';
-			continue;
+		
+		if (input[i] == 's') {
+			input[i+1] = ' ';
+			input[i+2] = ' ';
+			input[i+3] = ' ';
 		}
 
-		if (input[i] == '*') {
+		else if (input[i] == 'l' || input[i] == 'e') {
+			input[i+1] = ' ';
+			input[i+2] = ' ';
+		}
+
+		else if (input[i] == '*' && (prevPos+1 == i)) {
+			input[i-1] = '^';
+			input[i] = ' ';
+		}
+
+		else if (input[i] == '*') {
 			prevPos = i;
 		}
 	}
@@ -138,6 +152,7 @@ char **getExpressions (char *input, int *number) {
 
 	for (int i = 0; i < nbrExp; i++) {
 		allExp[i] = strtok(NULL, ",");
+		if (DEBUG_MODE) puts(allExp[i]);
 	}
 
 	*number = nbrExp;
@@ -154,7 +169,7 @@ char **getExpressions (char *input, int *number) {
 		char *precedence - a list that indicates the precedence
 		of the operations contained in this expressions
 */
-void convertRPN(char **expressions, int number; char *precedence) {
+void convertRPN(char **expressions, int number, char *precedence) {
 
 	for (int i = 0; i < number; i++) {
 		shuntingYard(expressions[i], precedence);
@@ -173,12 +188,13 @@ void convertRPN(char **expressions, int number; char *precedence) {
 void shuntingYard(char *expression, char* precedence) {
 	char temporary[strlen(expression)];
 	Stack opStack = newStack();
-
+	/*
 	while () {
 		if ()
 
 
-	}
+	}*/
 
+	deleteStack(opStack);
 	return;
 }
