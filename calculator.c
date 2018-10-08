@@ -14,6 +14,7 @@ int countCommas(char *input);
 char **getExpressions(char *input, int *number);
 void convertRPN(char **expressions, int number, char *precedence);
 void shuntingYard(char *expression, char* precedence);
+int precedence(char op, char *list);
 
 
 int main () {
@@ -186,15 +187,116 @@ void convertRPN(char **expressions, int number, char *precedence) {
 		char *precedence - list of precedence
 */
 void shuntingYard(char *expression, char* precedence) {
-	char temporary[strlen(expression)];
+	char temporary[strlen(expression)+1], cur;
+	int i = 0, j = 0;
 	Stack opStack = newStack();
-	/*
-	while () {
-		if ()
 
+	while (expression[j] != '\0') {
+		
+		cur = expression[j++];
 
-	}*/
+		if (isspace(cur)) continue;
+		
+		else if (isdigit(cur) || cur == '.') {
+			temporary[i++] = cur;
+		}
+
+		else if (isalpha(cur)) {
+			push(opStack, cur);
+		}
+
+		else if (cur == '(') {
+			push(opStack, cur);
+		}
+
+		else if (cur == ')') {
+			while (top(opStack) != '(') {
+				cur = pop(opStack);
+				if (cur == '\n') break;
+				temporary[i++] = cur;
+			}
+			if (cur == '\n') {
+				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				return;
+			}
+		}
+
+		else if (cur == '[') {
+			push(opStack, cur);
+		}
+
+		else if (cur == ']') {
+			while (top(opStack) != '[') {
+				cur = pop(opStack);
+				if (cur == '\n') break;
+				temporary[i++] = cur;
+			}
+			if (cur == '\n') {
+				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				return;
+			}
+		}
+
+		else if (cur == '{') {
+			push(opStack, cur);
+		}
+
+		else if (cur == '}') {
+			while (top(opStack) != '{') {
+				cur = pop(opStack);
+				if (cur == '\n') break;
+				temporary[i++] = cur;
+			}
+			if (cur == '\n') {
+				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				return;
+			}
+		}
+
+		else {	//it's an operator!!
+			while ( ( isalpha(top(opStack)) || precedence(top(opStack), precedence) > precedence(cur, precedence) ) && top(opStack) != '(' && top(opStack) != '[' && top(opStack) != '{') {
+				temporary[i++] = pop(opStack);
+			}
+			if (precedence(top(opStack), precedence) == precedence(cur, precedence)) {
+				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				return;
+			}
+			push(opStack, cur);
+		}
+
+	}
+
+	while (!isEmpty(opStack)) {
+		if (top(opStack) == '(' || top(opStack) == '[' || top(opStack) == '{') {
+			printf("Expressão incorreta\n");	//there was a syntax error in the expression
+			return;
+		}
+		temporary[i++] = pop(opStack);
+	}
+
+	temporary[i] = '\0';
+	strcpy(expression, temporary);
 
 	deleteStack(opStack);
 	return;
+}
+
+/*
+	Calculates the precedence of operator "op".
+	Parameters:
+		char op - operator to be checked
+		char *list - order of procedence
+	Return:
+		int - a number indicating it's precedence
+		(1 - lowest, 5 - highest)
+*/
+int precedence (char op, char *list) {
+	int p = 5, i = 0;
+	
+	while (list[i] != op && p > 0) {
+		p--;
+		i++;
+	}
+
+	return p;
 }
