@@ -4,7 +4,7 @@
 #include "stack.h"
 
 struct snode {
-	char c;
+	int n;
 	sNode next;
 };
 
@@ -15,7 +15,7 @@ struct stack {
 sNode newNode() {
 	sNode new = malloc(sizeof(SNODE));
 
-	new->c = 0;
+	new->n = 0;
 	new->next = NULL;
 
 	return new;
@@ -27,9 +27,9 @@ void freeNode(sNode x) {
 	return;
 }
 
-void printNode(sNode N) {
-	puts(N->str);
-	
+void printNode(sNode x) {
+	printf("%d\n", x->n);
+
 	return;
 }
 
@@ -41,16 +41,16 @@ Stack newStack() {
 	return new;
 }
 
-void push(Stack S, char ch) {
+void push(Stack S, int num) {
 
 	if (isEmpty(S)) {
 		S->top = newNode();
-		S->top->c = ch;
+		S->top->n = num;
 	}
 
 	else {
 		sNode aux = newNode();
-		aux->c = ch;
+		aux->n = num;
 		aux->next = S->top;
 		S->top = aux;
 	}
@@ -58,10 +58,10 @@ void push(Stack S, char ch) {
 	return;
 }
 
-char pop(Stack S) {
-	if (isEmpty(S)) return '\n';
+int pop(Stack S) {
+	if (isEmpty(S)) return -1;
 
-	char info = S->top->c;
+	int info = S->top->n;
 	sNode prev = S->top;
 	S->top = S->top->next;
 	freeNode(prev);
@@ -69,10 +69,10 @@ char pop(Stack S) {
 	return info;
 }
 
-char top(Stack S) {
-	if (isEmpty(S)) return '\n';
+int top(Stack S) {
+	if (isEmpty(S)) return -1;
 
-	return S->top->c;
+	return S->top->n;
 }
 
 int isEmpty(Stack x) {
