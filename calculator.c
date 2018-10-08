@@ -11,14 +11,18 @@ char *getInput();
 void simplifyPower(char *input);
 char *getPrecende(char *input);
 int countCommas(char *input);
-char **getExpressions(char *input);
+char **getExpressions(char *input, int *number);
+void convertRPN(char **expressions, int number; char *precedence);
+void shuntingYard(char *expression, char* precedence);
+
 
 int main () {
+	int nbrExp = 0;
 	char *input = getInput();
 	simplifyPower(input);
 	char *precedence = getPrecende(input);
-	if (DEBUG_MODE) puts(precedence);
-	char **expression = getExpressions(input);
+	char **expression = getExpressions(input, &nbrExp);
+	convertRPN(expression, nbrExp, precedence);
 
 	free(input);
 	free(precedence);
@@ -117,13 +121,16 @@ int countCommas(char *input) {
 
 /*
 	Split input string into individual expressions.
-	Parameter:
+	Parameters:
 		char *input - string to be splitted
+		int *number - variable in which the
+		function will return the number of 
+		expressions readed/splitted
 	Return:
 		char ** - an array of char *, each of them 
 		an individual expression (i.e. a matrix)
 */
-char **getExpressions (char *input) {
+char **getExpressions (char *input, int *number) {
 	int nbrExp = countCommas(input);
 	char **allExp = malloc(nbrExp*sizeof(char *));
 
@@ -131,8 +138,47 @@ char **getExpressions (char *input) {
 
 	for (int i = 0; i < nbrExp; i++) {
 		allExp[i] = strtok(NULL, ",");
-		if (DEBUG_MODE) puts(allExp[i]);
 	}
 
+	*number = nbrExp;
+
 	return allExp;
+}
+
+/*
+	Takes in a list of infix expressions and converts them
+	into RPN (Reverse Polish notation) expressions
+	Parameters:
+		char **expressions - list of expressions to be converted
+		int number - number of expressions
+		char *precedence - a list that indicates the precedence
+		of the operations contained in this expressions
+*/
+void convertRPN(char **expressions, int number; char *precedence) {
+
+	for (int i = 0; i < number; i++) {
+		shuntingYard(expressions[i], precedence);
+	}
+
+	return;
+}
+
+/*
+	Parses a mathematical expression specified in infix notation,
+	producing a postfix notation string.
+	Parameters:
+		char *expression - expression to be parsed
+		char *precedence - list of precedence
+*/
+void shuntingYard(char *expression, char* precedence) {
+	char temporary[strlen(expression)];
+	Stack opStack = newStack();
+
+	while () {
+		if ()
+
+
+	}
+
+	return;
 }
