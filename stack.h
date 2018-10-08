@@ -7,9 +7,9 @@
 	typedef STACK* Stack;
 
 	Stack newStack();
-	void push(Stack, int);
-	int pop(Stack);	//returns -1 when there is nothing left to pop
-	int top(Stack);	//doesn't pop out the information; returns -1 when there is nothing left to pop
+	void push(Stack, char);
+	char pop(Stack);	//returns '\n' when there is nothing left to pop
+	char top(Stack);	//doesn't pop out the information; returns '\n' when there is nothing left to pop
 	int isEmpty(Stack);
 	void printStack(Stack);
 	void deleteStack(Stack);
