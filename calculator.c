@@ -13,7 +13,7 @@ char *getPrecende(char *input);
 int countCommas(char *input);
 char **getExpressions(char *input, int *number);
 void convertRPN(char **expressions, int number, char *precedence);
-void shuntingYard(char *expression, char* precedence);
+void shuntingYard(char *expression, char* precdList);
 int precedence(char op, char *list);
 
 
@@ -21,11 +21,10 @@ int main () {
 	int nbrExp = 0;
 	char *input = getInput();
 	simplify(input);
-	if (DEBUG_MODE) puts(input);
 	char *precedence = getPrecende(input);
 	if (DEBUG_MODE) puts(precedence);
 	char **expression = getExpressions(input, &nbrExp);
-	convertRPN(expression, nbrExp, precedence);
+	//convertRPN(expression, nbrExp, precedence);
 
 	free(input);
 	free(precedence);
@@ -186,7 +185,7 @@ void convertRPN(char **expressions, int number, char *precedence) {
 		char *expression - expression to be parsed
 		char *precedence - list of precedence
 */
-void shuntingYard(char *expression, char* precedence) {
+void shuntingYard(char *expression, char* precdList) {
 	char temporary[strlen(expression)+1], cur;
 	int i = 0, j = 0;
 	Stack opStack = newStack();
@@ -254,10 +253,10 @@ void shuntingYard(char *expression, char* precedence) {
 		}
 
 		else {	//it's an operator!!
-			while ( ( isalpha(top(opStack)) || precedence(top(opStack), precedence) > precedence(cur, precedence) ) && top(opStack) != '(' && top(opStack) != '[' && top(opStack) != '{') {
+			while ( ( isalpha(top(opStack)) || precedence(top(opStack), precdList) > precedence(cur, precdList) ) && top(opStack) != '(' && top(opStack) != '[' && top(opStack) != '{') {
 				temporary[i++] = pop(opStack);
 			}
-			if (precedence(top(opStack), precedence) == precedence(cur, precedence)) {
+			if (precedence(top(opStack), precdList) == precedence(cur, precdList)) {
 				printf("Expressão incorreta\n");	//there was a syntax error in the expression
 				return;
 			}
