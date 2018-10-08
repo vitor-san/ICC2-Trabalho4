@@ -28,7 +28,7 @@ void freeNode(sNode x) {
 }
 
 void printNode(sNode N) {
-	puts(N->str);
+	printf("%c\n", N->c);
 	
 	return;
 }
