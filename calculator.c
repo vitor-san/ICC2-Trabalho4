@@ -251,7 +251,7 @@ bool isdelim (char x) {
 	Return:
 		bool - true if is, false if isn't
 */
-bool isdelim (char x) {
+bool isbinop (char x) {
 	if (x == '^' || x == '*' || x == '/' || x == '+' || x == '-') return true;
 	else return false;
 }
