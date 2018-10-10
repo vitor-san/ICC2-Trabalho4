@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+#include <string.h>
 #include <ctype.h>
 #include "stack.h"
 
@@ -13,22 +13,19 @@ char *getPrecende(char *input);
 int countCommas(char *input);
 char **getExpressions(char *input, int *number);
 void removeChar(char *string, char garbage);
-void convertRPN(char **expressions, int number, char *precedence);
-void shuntingYard(char *expression, char* precdList);
-int precedence(char op, char *list);
-
+void solve(char **exp, int nbrExp, char *precList);
+int precedence(char ope, char *precList);
+void freeAll(char *input, char *precList, char **exp, int nbrExp);
 
 int main () {
 	int nbrExp = 0;
 	char *input = getInput();
 	simplify(input);
 	char *precedence = getPrecende(input);
-	if (DEBUG_MODE) puts(precedence);
-	char **expression = getExpressions(input, &nbrExp);
-	convertRPN(expression, nbrExp, precedence);
+	char **expressions = getExpressions(input, &nbrExp);
+	solve(expressions, nbrExp, precedence);
 
-	free(input);
-	free(precedence);
+	freeAll(input, precedence, expressions, nbrExp);
 	return 0;
 }
 
@@ -182,139 +179,61 @@ void removeChar (char *string, char garbage) {
 }
 
 /*
-	Takes in a list of infix expressions and converts them
-	into RPN (Reverse Polish notation) expressions
+	Takes in a list of infix notation expressions and calculates
+	them using binary trees and stacks.
 	Parameters:
-		char **expressions - list of expressions to be converted
-		int number - number of expressions
-		char *precedence - a list that indicates the precedence
-		of the operations contained in this expressions
+		char **exp - list of expressions to be calculated
+		int nbrExp - number of expressions
+		char *precList - a list that indicates the precedence
+		of the operations contained in these expressions
 */
-void convertRPN (char **expressions, int number, char *precedence) {
+void solve (char **exp, int nbrExp, char *precList) {
 
-	for (int i = 0; i < number; i++) {
-		shuntingYard(expressions[i], precedence);
+	for (int i = 0; i < nbrExp; i++) {
+		// do something in relation with -> exp[i];
+		// for every expression, you're gonna do something... what is that?
 	}
 
-	return;
-}
-
-/*
-	Parses a mathematical expression specified in infix notation,
-	producing a postfix notation string.
-	Parameters:
-		char *expression - expression to be parsed
-		char *precedence - list of precedence
-*/
-void shuntingYard (char *expression, char* precdList) {
-	char temporary[strlen(expression)+1], cur;
-	int i = 0, j = 0;
-	Stack opStack = newStack();
-
-	while (expression[j] != '\0') {
-		
-		cur = expression[j++];
-		
-		if (isdigit(cur) || cur == '.') {
-			temporary[i++] = cur;
-		}
-
-		else if (isalpha(cur)) {
-			push(opStack, cur);
-		}
-
-		else if (cur == '(') {
-			push(opStack, cur);
-		}
-
-		else if (cur == ')') {
-			while (top(opStack) != '(') {
-				cur = pop(opStack);
-				if (cur == '\n') break;
-				temporary[i++] = cur;
-			}
-			if (cur == '\n') {
-				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
-				return;
-			}
-		}
-
-		else if (cur == '[') {
-			push(opStack, cur);
-		}
-
-		else if (cur == ']') {
-			while (top(opStack) != '[') {
-				cur = pop(opStack);
-				if (cur == '\n') break;
-				temporary[i++] = cur;
-			}
-			if (cur == '\n') {
-				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
-				return;
-			}
-		}
-
-		else if (cur == '{') {
-			push(opStack, cur);
-		}
-
-		else if (cur == '}') {
-			while (top(opStack) != '{') {
-				cur = pop(opStack);
-				if (cur == '\n') break;
-				temporary[i++] = cur;
-			}
-			if (cur == '\n') {
-				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
-				return;
-			}
-		}
-
-		else {	//it's an operator!!
-			while ( ( isalpha(top(opStack)) || precedence(top(opStack), precdList) > precedence(cur, precdList) ) && top(opStack) != '(' && top(opStack) != '[' && top(opStack) != '{') {
-				temporary[i++] = pop(opStack);
-			}
-			if (precedence(top(opStack), precdList) == precedence(cur, precdList)) {
-				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
-				return;
-			}
-			push(opStack, cur);
-		}
-
-	}
-
-	while (!isEmpty(opStack)) {
-		if (top(opStack) == '(' || top(opStack) == '[' || top(opStack) == '{') {
-			printf("Expressao incorreta.\n");	//there was a syntax error in the expression
-			return;
-		}
-		temporary[i++] = pop(opStack);
-	}
-
-	temporary[i] = '\0';
-	strcpy(expression, temporary);
-
-	deleteStack(opStack);
 	return;
 }
 
 /*
 	Calculates the precedence of operator "op".
 	Parameters:
-		char op - operator to be checked
-		char *list - order of procedence
+		char ope - operator to be checked
+		char *precList - string containing the 
+		order of precedence
 	Return:
 		int - a number indicating it's precedence
 		(1 - lowest, 5 - highest)
 */
-int precedence (char op, char *list) {
+int precedence (char ope, char *precList) {
 	int p = 5, i = 0;
 	
-	while (list[i] != op && p > 0) {
+	while (precList[i] != ope && p > 0) {
 		p--;
 		i++;
 	}
 
 	return p;
+}
+
+/*
+	Deallocates all the strings mallocated through the program.
+	Parameters:
+		char *input - input string
+		char *precList - precedence list
+		char **exp - matrix of expressions
+		int nbrExp - number of expressions
+*/
+void freeAll (char *input, char *precList, char **exp, int nbrExp) {
+	for (int i = 0; i < nbrExp; i++) {
+		free(exp[i]);
+	}
+	free(exp);
+
+	free(preced);
+	free(input);
+
+	return;
 }
