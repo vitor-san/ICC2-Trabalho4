@@ -32,7 +32,7 @@ int main () {
 	char **expressions = getExpressions(input, &nbrExp);
 	solve(expressions, nbrExp, precedence);
 
-	freeAll(input, precedence, expressions, nbrExp);
+	freeAll(input, precedence, expressions, nbrExp);	//tem erro aqui - ver no Lab 
 	return 0;
 }
 
@@ -204,7 +204,9 @@ void solve (char **exp, int nbrExp, char *precList) {
 			continue;
 		}
 
-		else if (DEBUG_MODE) printf("A expressao e semi-valida.\n"); 
+		//buildar a arvore
+		//ir calculando
+		//caso de algum erro, retornar e printar "Expressao incorreta."
 
 		//colocar na arvore
 		//calcular
