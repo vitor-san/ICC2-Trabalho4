@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 #include "stack.h"
+#include "btree.h"
 
 #define DEBUG_MODE 1
 
@@ -14,6 +16,9 @@ int countCommas(char *input);
 char **getExpressions(char *input, int *number);
 void removeChar(char *string, char garbage);
 void solve(char **exp, int nbrExp, char *precList);
+bool checkExpression(char *exp);
+bool isdelim(char x);
+bool isbinop(char x);
 int precedence(char ope, char *precList);
 void freeAll(char *input, char *precList, char **exp, int nbrExp);
 
@@ -188,13 +193,67 @@ void removeChar (char *string, char garbage) {
 		of the operations contained in these expressions
 */
 void solve (char **exp, int nbrExp, char *precList) {
+	bool isWrong = false;
 
 	for (int i = 0; i < nbrExp; i++) {
-		// do something in relation with -> exp[i];
-		// for every expression, you're gonna do something... what is that?
+		isWrong = checkExpression(exp[i]);
+
+		if (isWrong) {
+			printf("Expressao invalida.\n");
+			continue;
+		}
+
+		//colocar na arvore
+		//calcular
+		//se o resultado for calculavel, printar o resultado. Caso contrario, printar (Expressao invalida.\n)
 	}
 
 	return;
+}
+
+/*
+	Search for errors in expression passed as
+	argument. 
+	(The question is: have you found any errors?)
+	Parameter:
+		char *exp - expression to be checked
+	Return:
+		bool - true if the expression is wrong,
+		false if it's correct
+*/
+bool checkExpression (char *exp) {
+	bool hasErrors = false;
+
+
+
+
+
+
+	return hasErrors;
+}
+
+/*
+	Checks if a char is a delimiter or not.
+	Parameter:
+		char x - char to be analysed
+	Return:
+		bool - true if is, false if isn't
+*/
+bool isdelim (char x) {
+	if (x == '(' || x == ')' || x == '[' || x == ']' || x == '{' || x == '}') return true;
+	else return false;
+}
+
+/*
+	Checks if a char is a binary operation or not.
+	Parameter:
+		char x - char to be analysed
+	Return:
+		bool - true if is, false if isn't
+*/
+bool isdelim (char x) {
+	if (x == '^' || x == '*' || x == '/' || x == '+' || x == '-') return true;
+	else return false;
 }
 
 /*

@@ -89,7 +89,7 @@ void printStack(Stack S) {
 	return;
 }
 
-void deleteStack(Stack x) {
+void delStack(Stack x) {
 	while (!isEmpty(x)) pop(x);
 	free(x);
 

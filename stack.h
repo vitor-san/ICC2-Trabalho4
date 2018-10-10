@@ -12,6 +12,6 @@
 	char top(Stack);	//doesn't pop out the information; returns '\n' when there is nothing left to pop
 	int isEmpty(Stack);
 	void printStack(Stack);
-	void deleteStack(Stack);
+	void delStack(Stack);
 
 #endif
