@@ -25,7 +25,7 @@ int main () {
 	char *precedence = getPrecende(input);
 	if (DEBUG_MODE) puts(precedence);
 	char **expression = getExpressions(input, &nbrExp);
-	//convertRPN(expression, nbrExp, precedence);
+	convertRPN(expression, nbrExp, precedence);
 
 	free(input);
 	free(precedence);
@@ -214,10 +214,8 @@ void shuntingYard (char *expression, char* precdList) {
 	while (expression[j] != '\0') {
 		
 		cur = expression[j++];
-
-		if (isspace(cur)) continue;
 		
-		else if (isdigit(cur) || cur == '.') {
+		if (isdigit(cur) || cur == '.') {
 			temporary[i++] = cur;
 		}
 
@@ -236,7 +234,7 @@ void shuntingYard (char *expression, char* precdList) {
 				temporary[i++] = cur;
 			}
 			if (cur == '\n') {
-				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
 				return;
 			}
 		}
@@ -252,7 +250,7 @@ void shuntingYard (char *expression, char* precdList) {
 				temporary[i++] = cur;
 			}
 			if (cur == '\n') {
-				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
 				return;
 			}
 		}
@@ -268,7 +266,7 @@ void shuntingYard (char *expression, char* precdList) {
 				temporary[i++] = cur;
 			}
 			if (cur == '\n') {
-				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
 				return;
 			}
 		}
@@ -278,7 +276,7 @@ void shuntingYard (char *expression, char* precdList) {
 				temporary[i++] = pop(opStack);
 			}
 			if (precedence(top(opStack), precdList) == precedence(cur, precdList)) {
-				printf("Expressão incorreta\n");	//there was a syntax error in the expression
+				printf("Expressao incorreta.\n");	//there was a syntax error in the expression
 				return;
 			}
 			push(opStack, cur);
@@ -288,7 +286,7 @@ void shuntingYard (char *expression, char* precdList) {
 
 	while (!isEmpty(opStack)) {
 		if (top(opStack) == '(' || top(opStack) == '[' || top(opStack) == '{') {
-			printf("Expressão incorreta\n");	//there was a syntax error in the expression
+			printf("Expressao incorreta.\n");	//there was a syntax error in the expression
 			return;
 		}
 		temporary[i++] = pop(opStack);
