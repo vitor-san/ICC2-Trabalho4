@@ -12,6 +12,7 @@ void simplify(char *input);
 char *getPrecende(char *input);
 int countCommas(char *input);
 char **getExpressions(char *input, int *number);
+void removeChar(char *string, char garbage);
 void convertRPN(char **expressions, int number, char *precedence);
 void shuntingYard(char *expression, char* precdList);
 int precedence(char op, char *list);
@@ -121,7 +122,7 @@ char *getPrecende (char *input) {
 	Return:
 		int - number of commas in input string
 */
-int countCommas(char *input) {
+int countCommas (char *input) {
 	int nCommas = 0, i = 0;
 	char aux;
 
@@ -152,12 +153,32 @@ char **getExpressions (char *input, int *number) {
 
 	for (int i = 0; i < nbrExp; i++) {
 		allExp[i] = strtok(NULL, ",");
+		removeChar(allExp[i], ' ');
+		removeChar(allExp[i], '\n');
 		if (DEBUG_MODE) puts(allExp[i]);
 	}
 
 	*number = nbrExp;
 
 	return allExp;
+}
+
+/*
+	Removes a determinated character from a string.
+	Parameters:
+		char *string - string to be modified
+		char garbage - char to be deleted from string
+*/
+void removeChar (char *string, char garbage) {
+	char *source, *destination;
+
+	for (source = destination = string; *source != '\0'; source++) {
+		*destination = *source;
+		if (*destination != garbage) destination++;
+	}
+	*destination = '\0';
+
+	return;
 }
 
 /*
@@ -169,7 +190,7 @@ char **getExpressions (char *input, int *number) {
 		char *precedence - a list that indicates the precedence
 		of the operations contained in this expressions
 */
-void convertRPN(char **expressions, int number, char *precedence) {
+void convertRPN (char **expressions, int number, char *precedence) {
 
 	for (int i = 0; i < number; i++) {
 		shuntingYard(expressions[i], precedence);
@@ -185,7 +206,7 @@ void convertRPN(char **expressions, int number, char *precedence) {
 		char *expression - expression to be parsed
 		char *precedence - list of precedence
 */
-void shuntingYard(char *expression, char* precdList) {
+void shuntingYard (char *expression, char* precdList) {
 	char temporary[strlen(expression)+1], cur;
 	int i = 0, j = 0;
 	Stack opStack = newStack();
