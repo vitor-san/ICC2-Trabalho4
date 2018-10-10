@@ -17,6 +17,8 @@ char **getExpressions(char *input, int *number);
 void removeChar(char *string, char garbage);
 void solve(char **exp, int nbrExp, char *precList);
 bool checkExpression(char *exp);
+bool isopndelim(char x);
+bool isclsdelim(char x);
 bool isdelim(char x);
 bool isbinop(char x);
 int precedence(char ope, char *precList);
@@ -157,7 +159,6 @@ char **getExpressions (char *input, int *number) {
 		allExp[i] = strtok(NULL, ",");
 		removeChar(allExp[i], ' ');
 		removeChar(allExp[i], '\n');
-		if (DEBUG_MODE) puts(allExp[i]);
 	}
 
 	*number = nbrExp;
@@ -199,9 +200,11 @@ void solve (char **exp, int nbrExp, char *precList) {
 		isWrong = checkExpression(exp[i]);
 
 		if (isWrong) {
-			printf("Expressao invalida.\n");
+			printf("Expressao incorreta.\n");
 			continue;
 		}
+
+		else if (DEBUG_MODE) printf("A expressao e semi-valida.\n"); 
 
 		//colocar na arvore
 		//calcular
@@ -222,14 +225,66 @@ void solve (char **exp, int nbrExp, char *precList) {
 		false if it's correct
 */
 bool checkExpression (char *exp) {
-	bool hasErrors = false;
+	char *cur = exp;
+	Stack delimStk = newStack();	//antes de retornar, eu SEMPRE preciso deletar a pilha primeiro;
 
+	while (*cur != '\0') {
+		
+		if (isopndelim(*cur)) {
+			push(delimStk, *cur);
+		}
 
+		else if (isclsdelim(*cur)) {
+			if ( *cur == ')' && top(delimStk) == '(' ) pop(delimStk);
+			else if ( *cur == ']' && top(delimStk) == '[' ) pop(delimStk);
+			else if ( *cur == '}' && top(delimStk) == '{' ) pop(delimStk);
+			else {
+				delStack(delimStk);
+				return true;
+			}
+		}
 
+		else if (isbinop(*cur)) {
+			if (isbinop(*(cur+1))) {
+				delStack(delimStk);
+				return true;
+			}
+		}
 
+		cur++;
+	}
 
+	if (!isEmpty(delimStk)) {
+		delStack(delimStk);
+		return true;
+	}
 
-	return hasErrors;
+	delStack(delimStk);
+	return false;
+}
+
+/*
+	Checks if a char is a open delimiter or not.
+	Parameter:
+		char x - char to be analysed
+	Return:
+		bool - true if is, false if isn't
+*/
+bool isopndelim (char x) {
+	if (x == '(' || x == '[' || x == '{') return true;
+	else return false;
+}
+
+/*
+	Checks if a char is a close delimiter or not.
+	Parameter:
+		char x - char to be analysed
+	Return:
+		bool - true if is, false if isn't
+*/
+bool isclsdelim (char x) {
+	if (x == ')' || x == ']' || x == '}') return true;
+	else return false;
 }
 
 /*
@@ -291,7 +346,7 @@ void freeAll (char *input, char *precList, char **exp, int nbrExp) {
 	}
 	free(exp);
 
-	free(preced);
+	free(precList);
 	free(input);
 
 	return;
