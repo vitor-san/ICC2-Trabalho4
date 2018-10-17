@@ -22,17 +22,20 @@ bool isclsdelim(char x);
 bool isdelim(char x);
 bool isbinop(char x);
 int precedence(char ope, char *precList);
-void freeAll(char *input, char *precList, char **exp, int nbrExp);
+void freeAll(char *input, char *precList, char **exp);
 
 int main () {
 	int nbrExp = 0;
+
 	char *input = getInput();
 	simplify(input);
+
 	char *precedence = getPrecende(input);
 	char **expressions = getExpressions(input, &nbrExp);
+
 	solve(expressions, nbrExp, precedence);
 
-	freeAll(input, precedence, expressions, nbrExp);	//tem erro aqui - ver no Lab 
+	freeAll(input, precedence, expressions);
 	return 0;
 }
 
@@ -204,9 +207,7 @@ void solve (char **exp, int nbrExp, char *precList) {
 			continue;
 		}
 
-		//buildar a arvore
-		//ir calculando
-		//caso de algum erro, retornar e printar "Expressao incorreta."
+		else if (DEBUG_MODE) printf("A expressao e semi-valida.\n"); 
 
 		//colocar na arvore
 		//calcular
@@ -342,14 +343,11 @@ int precedence (char ope, char *precList) {
 		char **exp - matrix of expressions
 		int nbrExp - number of expressions
 */
-void freeAll (char *input, char *precList, char **exp, int nbrExp) {
-	for (int i = 0; i < nbrExp; i++) {
-		free(exp[i]);
-	}
-	free(exp);
+void freeAll (char *input, char *precList, char **exp) {
 
-	free(precList);
 	free(input);
+	free(precList);
+	free(exp);
 
 	return;
 }

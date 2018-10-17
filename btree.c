@@ -14,7 +14,7 @@ struct node {
 	Node right;
 };
 
-Node newNode () {
+Node newtNode () {
 	Node new = malloc(sizeof(NODE));
 	new->info.nbr = 0;
 	new->left = NULL;
@@ -23,7 +23,7 @@ Node newNode () {
 	return new;
 }
 
-void delNode (Node x) {
+void deltNode (Node x) {
 	if (x == NULL) return;
 	
 	if (x->left == NULL && x->right == NULL) {
@@ -31,15 +31,15 @@ void delNode (Node x) {
 		return;
 	}
 	
-	delNode(x->left);
-	delNode(x->right);
+	deltNode(x->left);
+	deltNode(x->right);
 	free(x);
 
 	return;
 }
 
 Tree newTree () {
-	return newNode();
+	return newtNode();
 }
 
 void insertOper (Tree node, char c) {
@@ -48,8 +48,8 @@ void insertOper (Tree node, char c) {
 	if (node->left == NULL && node->right == NULL) {
 		
 		node->info.opr = c;
-		node->left = newNode();
-		node->right = newNode();
+		node->left = newtNode();
+		node->right = newtNode();
 		return;
 	}
 
@@ -66,8 +66,8 @@ void insertNum (Tree node, double n) {
 		
 		node->info.nbr = n;
 		node->isLeaf = 1;
-		node->left = newNode();
-		node->right = newNode();
+		node->left = newtNode();
+		node->right = newtNode();
 		return;
 	}
 
@@ -115,7 +115,7 @@ void delTree (Tree t) {
 
 	delTree(t->left);
 	delTree(t->right);
-	delNode(t);
+	deltNode(t);
 
 	return;
 }
