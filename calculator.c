@@ -22,7 +22,8 @@ bool isopndelim(char x);
 bool isclsdelim(char x);
 bool isdelim(char x);
 bool isbinop(char x);
-Tree buildTree(char *exp);
+Tree buildTree(char *exp, char *precList);
+void recursiveBuild(char* exp, int beg, int end, Tree curNode, char *precList);
 double calculate(Tree expTree);
 int precedence(char ope, char *precList);
 void freeAll(char *input, char *precList, char **exp);
@@ -39,7 +40,7 @@ int main () {
 	solve(expressions, nbrExp, precedence);
 
 	freeAll(input, precedence, expressions);
-	
+
 	return 0;
 }
 
@@ -220,15 +221,21 @@ void solve (char **exp, int nbrExp, char *precList) {
 			continue;
 		}
 
-		expTree = buildTree(exp[i]);
+		expTree = buildTree(exp[i], precList);
+		if (DEBUG_MODE) {
+			printTree(expTree);
+			printf("\n");
+		}
 		result = calculate(expTree);
 		
 		if (result == ERROR) {
 			printf("Expressao incorreta.\n");
+			delTree(expTree);
 			continue;
 		}
 
 		printf("%.2f\n", result);
+		delTree(expTree);
 	}
 
 	return;
@@ -345,12 +352,97 @@ bool isbinop (char x) {
 	Return:
 		Tree - root of the expression tree
 */
-Tree buildTree (char *exp) {
+Tree buildTree (char *exp, char *precList) {
 	Tree expTree = newTree();
-
-
-
+	recursiveBuild(exp, 0, strlen(exp), expTree, precList);
 	return expTree;
+}
+
+
+/*
+	Simply helps 'buildTree' to reach it's goal by 
+	doing assignments at each node, recursively.
+	Such thing simplifies the problem.
+*/
+void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) {
+	if (curNode == NULL) return;
+
+	char op;
+	int opPos;
+	bool hasFoundOp = false;
+	bool isOnParentheses = false;
+	bool isOnBrackets = false;
+	bool isOnBraces = false;
+
+	for (int i = beg; i <= end; i++) {
+		
+		if (exp[i] == '(') {
+			isOnParentheses = true;
+		}
+
+		else if (exp[i] == '[') {
+			isOnBrackets = true;
+		}
+
+		else if (exp[i] == '{') {
+			isOnBraces = true;
+		}
+
+		else if (exp[i] == ')') {
+			isOnParentheses = false;
+		}
+
+		else if (exp[i] == ']') {
+			isOnBrackets = false;
+		}
+
+		else if (exp[i] == '}') {
+			isOnBraces = false;
+		}
+
+		else if (!isOnParentheses && !isOnBrackets && !isOnBraces && isbinop(exp[i]) && !hasFoundOp) {
+			hasFoundOp = true;
+			op = exp[i];
+			opPos = i;
+		}
+
+		else if (!isOnParentheses && !isOnBrackets && !isOnBraces && isbinop(exp[i])) {
+			if (precedence(exp[i], precList) < precedence(op, precList)) {
+				op = exp[i];
+				opPos = i;
+			}
+		}
+
+	}
+
+	if (hasFoundOp) {
+		insertOper(curNode, op);
+		recursiveBuild(exp, beg, opPos-1, getLeft(curNode), precList);
+		recursiveBuild(exp, opPos+1, end, getRight(curNode), precList);
+	}
+
+	else {
+		
+		if (isdelim(exp[beg])) recursiveBuild(exp, beg+1, end-1, curNode, precList);
+		
+		else if (isdelim(exp[beg+1])) {
+			insertOper(curNode, exp[beg]);
+			recursiveBuild(exp, beg+2, end-1, getLeft(curNode), precList);
+		}
+
+		else {
+			char *temp = calloc(end-beg+1, sizeof(char));
+			int j;
+			for (int i = beg, j = 0; i < end-beg+1; i++, j++) temp[j] = exp[i];
+			temp[j] = '\0';
+
+			insertNum(curNode, atof(temp));
+			free(temp);
+		}
+
+	}
+
+	return;
 }
 
 

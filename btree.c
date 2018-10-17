@@ -104,8 +104,8 @@ void printTree (Tree n) {
 	printTree(n->left);
 	printTree(n->right);
 
-	if (n->isLeaf) printf("%0.2lf\n", n->info.nbr);
-	else printf("%c\n", n->info.opr);
+	if (n->isLeaf) printf("%0.2lf ", n->info.nbr);
+	else printf("%c ", n->info.opr);
 
 	return;
 }
