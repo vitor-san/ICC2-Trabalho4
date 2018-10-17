@@ -8,6 +8,7 @@
 #include "btree.h"
 
 #define DEBUG_MODE 1
+#define ERROR -12345.6789
 
 char *getInput();
 void simplify(char *input);
@@ -21,6 +22,8 @@ bool isopndelim(char x);
 bool isclsdelim(char x);
 bool isdelim(char x);
 bool isbinop(char x);
+Tree buildTree(char *exp);
+double calculate(Tree expTree);
 int precedence(char ope, char *precList);
 void freeAll(char *input, char *precList, char **exp);
 
@@ -36,8 +39,10 @@ int main () {
 	solve(expressions, nbrExp, precedence);
 
 	freeAll(input, precedence, expressions);
+	
 	return 0;
 }
+
 
 /*
 	Reads input from stdin, formatting it to contain no space 
@@ -60,6 +65,7 @@ char *getInput () {
 
 	return input;
 }
+
 
 /*
 	Changes all "**" in input to "^ ", all 
@@ -96,6 +102,7 @@ void simplify (char *input) {
 	return;
 }
 
+
 /*
 	Returns a list of operators, with position 0 of the
 	string being the most precedent operator and pos. 5
@@ -122,6 +129,7 @@ char *getPrecende (char *input) {
 	return precList;
 }
 
+
 /*
 	Count the number of commas (',') in string passed as argument.
 	Parameter:
@@ -140,6 +148,7 @@ int countCommas (char *input) {
 
 	return nCommas;
 }
+
 
 /*
 	Split input string into individual expressions.
@@ -169,6 +178,7 @@ char **getExpressions (char *input, int *number) {
 	return allExp;
 }
 
+
 /*
 	Removes a determinated character from a string.
 	Parameters:
@@ -187,6 +197,7 @@ void removeChar (char *string, char garbage) {
 	return;
 }
 
+
 /*
 	Takes in a list of infix notation expressions and calculates
 	them using binary trees and stacks.
@@ -198,6 +209,8 @@ void removeChar (char *string, char garbage) {
 */
 void solve (char **exp, int nbrExp, char *precList) {
 	bool isWrong = false;
+	Tree expTree;
+	double result;
 
 	for (int i = 0; i < nbrExp; i++) {
 		isWrong = checkExpression(exp[i]);
@@ -207,15 +220,20 @@ void solve (char **exp, int nbrExp, char *precList) {
 			continue;
 		}
 
-		else if (DEBUG_MODE) printf("A expressao e semi-valida.\n"); 
+		expTree = buildTree(exp[i]);
+		result = calculate(expTree);
+		
+		if (result == ERROR) {
+			printf("Expressao incorreta.\n");
+			continue;
+		}
 
-		//colocar na arvore
-		//calcular
-		//se o resultado for calculavel, printar o resultado. Caso contrario, printar (Expressao invalida.\n)
+		printf("%.2f\n", result);
 	}
 
 	return;
 }
+
 
 /*
 	Search for errors in expression passed as
@@ -266,6 +284,7 @@ bool checkExpression (char *exp) {
 	return false;
 }
 
+
 /*
 	Checks if a char is a open delimiter or not.
 	Parameter:
@@ -277,6 +296,7 @@ bool isopndelim (char x) {
 	if (x == '(' || x == '[' || x == '{') return true;
 	else return false;
 }
+
 
 /*
 	Checks if a char is a close delimiter or not.
@@ -290,6 +310,7 @@ bool isclsdelim (char x) {
 	else return false;
 }
 
+
 /*
 	Checks if a char is a delimiter or not.
 	Parameter:
@@ -302,6 +323,7 @@ bool isdelim (char x) {
 	else return false;
 }
 
+
 /*
 	Checks if a char is a binary operation or not.
 	Parameter:
@@ -313,6 +335,40 @@ bool isbinop (char x) {
 	if (x == '^' || x == '*' || x == '/' || x == '+' || x == '-') return true;
 	else return false;
 }
+
+
+/*
+	Builds up a tree of operators and numbers,
+	which will be used later to solve de expression.
+	Parameter:
+		char *exp - expression used to build the tree
+	Return:
+		Tree - root of the expression tree
+*/
+Tree buildTree (char *exp) {
+	Tree expTree = newTree();
+
+
+
+	return expTree;
+}
+
+
+/*
+	Evaluates the expression represented by the tree,
+	going from it's leaves to it's root.
+	Parameter:
+		Tree expTree - binary tree containing the
+		expression to be calculated
+	Return:
+		double - final result of the calculations
+*/
+double calculate (Tree expTree) {
+
+
+
+}
+
 
 /*
 	Calculates the precedence of operator "op".
@@ -334,6 +390,7 @@ int precedence (char ope, char *precList) {
 
 	return p;
 }
+
 
 /*
 	Deallocates all the strings mallocated through the program.
