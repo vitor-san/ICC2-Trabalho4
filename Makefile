@@ -1,5 +1,5 @@
 all:
-	gcc -o calculator stack.c calculator.c
+	gcc -o calculator btree.c stack.c calculator.c -lm
 
 run:
 	./calculator
