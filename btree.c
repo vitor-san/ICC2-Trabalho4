@@ -16,7 +16,7 @@ struct node {
 
 Node newtNode () {
 	Node new = malloc(sizeof(NODE));
-	new->info.nbr = 0;
+	new->info.opr = 'E';
 	new->left = NULL;
 	new->right = NULL;
 	new->isLeaf = 0;
@@ -53,8 +53,15 @@ void insertOper (Tree node, char c) {
 		return;
 	}
 
-	else {
+	else if (node->left == NULL) {
 		node->info.opr = c;
+		node->left = newtNode();
+		return;
+	}
+
+	else if (node->right == NULL) {
+		node->info.opr = c;
+		node->right = newtNode();
 		return;
 	}
 }
@@ -66,12 +73,16 @@ void insertNum (Tree node, double n) {
 		
 		node->info.nbr = n;
 		node->isLeaf = 1;
-		node->left = newtNode();
-		node->right = newtNode();
 		return;
 	}
 
-	else {
+	else if (node->left == NULL) {
+		node->info.nbr = n;
+		node->isLeaf = 1;
+		return;
+	}
+
+	else if (node->right == NULL) {
 		node->info.nbr = n;
 		node->isLeaf = 1;
 		return;
@@ -104,8 +115,8 @@ void printTree (Tree n) {
 	printTree(n->left);
 	printTree(n->right);
 
-	if (n->isLeaf) printf("%0.2lf ", n->info.nbr);
-	else printf("%c ", n->info.opr);
+	if (n->isLeaf) printf("O valor eh: %0.2lf\n", n->info.nbr);
+	else printf("O valor eh: %c\n", n->info.opr);
 
 	return;
 }

@@ -226,16 +226,16 @@ void solve (char **exp, int nbrExp, char *precList) {
 			printTree(expTree);
 			printf("\n");
 		}
-		result = calculate(expTree);
+		//result = calculate(expTree);
 		
-		if (result == ERROR) {
-			printf("Expressao incorreta.\n");
-			delTree(expTree);
-			continue;
-		}
+		//if (result == ERROR) {
+			//printf("Expressao incorreta.\n");
+			//delTree(expTree);
+			//continue;
+		//}
 
-		printf("%.2f\n", result);
-		delTree(expTree);
+		//printf("%.2f\n", result);
+		//delTree(expTree);
 	}
 
 	return;
@@ -376,6 +376,8 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 
 	for (int i = beg; i <= end; i++) {
 		
+		if (exp[i] == '\0') break;
+
 		if (exp[i] == '(') {
 			isOnParentheses = true;
 		}
@@ -400,17 +402,19 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 			isOnBraces = false;
 		}
 
-		else if (!isOnParentheses && !isOnBrackets && !isOnBraces && isbinop(exp[i]) && !hasFoundOp) {
-			hasFoundOp = true;
-			op = exp[i];
-			opPos = i;
-		}
-
-		else if (!isOnParentheses && !isOnBrackets && !isOnBraces && isbinop(exp[i])) {
-			if (precedence(exp[i], precList) < precedence(op, precList)) {
+		else if (!isOnParentheses && !isOnBrackets && !isOnBraces && isbinop(exp[i]) ) {
+			
+			if (!hasFoundOp) {
+				hasFoundOp = true;
 				op = exp[i];
 				opPos = i;
 			}
+
+			else if (precedence(exp[i], precList) < precedence(op, precList)) {
+				op = exp[i];
+				opPos = i;
+			}
+
 		}
 
 	}
@@ -425,13 +429,13 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 		
 		if (isdelim(exp[beg])) recursiveBuild(exp, beg+1, end-1, curNode, precList);
 		
-		else if (isdelim(exp[beg+1])) {
+		else if (!(beg == end) && isdelim(exp[beg+1])) {
 			insertOper(curNode, exp[beg]);
 			recursiveBuild(exp, beg+2, end-1, getLeft(curNode), precList);
 		}
 
 		else {
-			char *temp = calloc(end-beg+1, sizeof(char));
+			char *temp = calloc(end-beg+2, sizeof(char));
 			int j;
 			for (int i = beg, j = 0; i < end-beg+1; i++, j++) temp[j] = exp[i];
 			temp[j] = '\0';
