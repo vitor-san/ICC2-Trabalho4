@@ -16,7 +16,6 @@
 #include "stack.h"
 #include "btree.h"
 
-#define DEBUG_MODE 0
 #define EMPTY 9876.5432
 #define ERROR -12345.6789
 
@@ -232,20 +231,16 @@ void solve (char **exp, int nbrExp, char *precList) {
 		}
 
 		expTree = buildTree(exp[i], precList);
-		if (DEBUG_MODE) {
-			printTree(expTree);
-			printf("\n");
-		}
 		result = calculate(expTree);
 		
 		if (result == ERROR) {
 			printf("Expressao incorreta.\n");
-			//delTree(expTree);
+			delTree(expTree);
 			continue;
 		}
 
 		printf("%.2f\n", result);
-		//delTree(expTree);
+		delTree(expTree);
 	}
 
 	return;

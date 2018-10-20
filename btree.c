@@ -23,21 +23,6 @@ Node newtNode () {
 	return new;
 }
 
-void deltNode (Node x) {
-	if (x == NULL) return;
-	
-	if (x->left == NULL && x->right == NULL) {
-		free(x);
-		return;
-	}
-	
-	deltNode(x->left);
-	deltNode(x->right);
-	free(x);
-
-	return;
-}
-
 Tree newTree () {
 	return newtNode();
 }
@@ -126,7 +111,7 @@ void delTree (Tree t) {
 
 	delTree(t->left);
 	delTree(t->right);
-	deltNode(t);
+	free(t);
 
 	return;
 }
