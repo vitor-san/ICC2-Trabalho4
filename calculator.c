@@ -1,3 +1,12 @@
+/* Program that calculates mathematical expressions
+   with an specific operation precedence order, given
+   by the user.
+   Author: Vitor Santana Cordeiro
+   Year: 2018
+   ICMC, USP, Sao Carlos, Sao Paulo, Brazil.
+   Introduction to Computer Science II Assignment
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -7,7 +16,8 @@
 #include "stack.h"
 #include "btree.h"
 
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
+#define EMPTY 9876.5432
 #define ERROR -12345.6789
 
 char *getInput();
@@ -24,7 +34,7 @@ bool isdelim(char x);
 bool isbinop(char x);
 Tree buildTree(char *exp, char *precList);
 void recursiveBuild(char* exp, int beg, int end, Tree curNode, char *precList);
-double calculate(Tree expTree);
+double calculate(Tree curNode);
 int precedence(char ope, char *precList);
 void freeAll(char *input, char *precList, char **exp);
 
@@ -228,13 +238,14 @@ void solve (char **exp, int nbrExp, char *precList) {
 		}
 		result = calculate(expTree);
 		
-		//if (result == ERROR) {
-			//printf("Expressao incorreta.\n");
+		if (result == ERROR) {
+			printf("Expressao incorreta.\n");
 			//delTree(expTree);
-			//continue;
-		//}
+			continue;
+		}
 
-		//printf("%.2f\n", result);
+		printf("%.2f\n", result);
+		//delTree(expTree);
 	}
 
 	return;
@@ -346,8 +357,9 @@ bool isbinop (char x) {
 /*
 	Builds up a tree of operators and numbers,
 	which will be used later to solve de expression.
-	Parameter:
+	Parameters:
 		char *exp - expression used to build the tree
+		char *precList - list containing precedence order
 	Return:
 		Tree - root of the expression tree
 */
@@ -359,9 +371,14 @@ Tree buildTree (char *exp, char *precList) {
 
 
 /*
-	Simply helps 'buildTree' to reach it's goal by 
+	Helps 'buildTree' to reach it's goal by 
 	doing assignments at each node, recursively.
-	Such thing simplifies the problem.
+	Parameters:
+		char *exp - expression used to build the tree
+		int beg - beggining of the expression
+		int end - end of the expression
+		Tree curNode - current node of recursion
+		char *precList - list containing precedence order
 */
 void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) {
 	if (curNode == NULL) return;
@@ -440,7 +457,6 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 			char *temp = calloc(end-beg+2, sizeof(char));
 			int j;
 			for (int i = beg, j = 0; i <= end; i++, j++) temp[j] = exp[i];
-			temp[j] = '\0';
 
 			insertNum(curNode, atof(temp));
 			free(temp);
@@ -461,10 +477,61 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 	Return:
 		double - final result of the calculations
 */
-double calculate (Tree expTree) {
+double calculate (Tree curNode) {
+	if (curNode == NULL) return EMPTY;
 
+	double oper1 = calculate(getLeft(curNode));
+	double oper2 = EMPTY;
+	if (getOper(curNode) != 'l' && getOper(curNode) != 'e' && getOper(curNode) != 's') oper2 = calculate(getRight(curNode));
 
+	if (oper1 == ERROR || oper2 == ERROR) return ERROR;
 
+	if (oper1 == EMPTY) {		//this means that the current node is a leaf 
+		return getNum(curNode);
+	}
+
+	if (oper2 == EMPTY) {
+		
+		switch (getOper(curNode)) {
+			case 'l':
+				if (oper1 <= 0) return ERROR;
+				else return log2(oper1);
+			break;
+
+			case 'e':
+				return exp(oper1);
+			break;
+
+			case 's':
+				if (oper1 < 0) return ERROR;
+				else return sqrt(oper1);
+			break;
+		}
+
+	}
+
+	switch (getOper(curNode)) {
+		case '+': 
+			return oper1 + oper2;
+		break;
+
+		case '-': 
+			return oper1 - oper2;
+		break;
+
+		case '*': 
+			return oper1 * oper2;
+		break;
+
+		case '/':
+			if (oper2 == 0) return ERROR; 
+			else return oper1 / oper2;
+		break;
+
+		case '^':
+			return pow(oper1, oper2);
+		break;
+	}
 }
 
 
