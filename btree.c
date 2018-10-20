@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "btree.h"
 
 typedef union x {
@@ -16,7 +16,7 @@ struct node {
 
 Node newtNode () {
 	Node new = malloc(sizeof(NODE));
-	new->info.opr = 'E';
+	new->info.opr = ' ';
 	new->left = NULL;
 	new->right = NULL;
 	new->isLeaf = 0;

@@ -226,7 +226,7 @@ void solve (char **exp, int nbrExp, char *precList) {
 			printTree(expTree);
 			printf("\n");
 		}
-		//result = calculate(expTree);
+		result = calculate(expTree);
 		
 		//if (result == ERROR) {
 			//printf("Expressao incorreta.\n");
@@ -235,7 +235,6 @@ void solve (char **exp, int nbrExp, char *precList) {
 		//}
 
 		//printf("%.2f\n", result);
-		//delTree(expTree);
 	}
 
 	return;
@@ -354,7 +353,7 @@ bool isbinop (char x) {
 */
 Tree buildTree (char *exp, char *precList) {
 	Tree expTree = newTree();
-	recursiveBuild(exp, 0, strlen(exp), expTree, precList);
+	recursiveBuild(exp, 0, strlen(exp)-1, expTree, precList);
 	return expTree;
 }
 
@@ -371,35 +370,38 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 	int opPos;
 	bool hasFoundOp = false;
 	bool isOnParentheses = false;
+	int nbrParentheses = 0;
 	bool isOnBrackets = false;
+	int nbrBrackets = 0;
 	bool isOnBraces = false;
+	int nbrBraces = 0;
 
 	for (int i = beg; i <= end; i++) {
 		
 		if (exp[i] == '\0') break;
 
 		if (exp[i] == '(') {
-			isOnParentheses = true;
+			if (nbrParentheses++ == 0) isOnParentheses = true;
 		}
 
 		else if (exp[i] == '[') {
-			isOnBrackets = true;
+			if (nbrBrackets++ == 0) isOnBrackets = true;
 		}
 
 		else if (exp[i] == '{') {
-			isOnBraces = true;
+			if (nbrBraces++ == 0) isOnBraces = true;
 		}
 
 		else if (exp[i] == ')') {
-			isOnParentheses = false;
+			if (nbrParentheses-- == 1) isOnParentheses = false;
 		}
 
 		else if (exp[i] == ']') {
-			isOnBrackets = false;
+			if (nbrBrackets-- == 1) isOnBrackets = false;
 		}
 
 		else if (exp[i] == '}') {
-			isOnBraces = false;
+			if (nbrBraces-- == 1) isOnBraces = false;
 		}
 
 		else if (!isOnParentheses && !isOnBrackets && !isOnBraces && isbinop(exp[i]) ) {
@@ -437,7 +439,7 @@ void recursiveBuild (char* exp, int beg, int end, Tree curNode, char *precList) 
 		else {
 			char *temp = calloc(end-beg+2, sizeof(char));
 			int j;
-			for (int i = beg, j = 0; i < end-beg+1; i++, j++) temp[j] = exp[i];
+			for (int i = beg, j = 0; i <= end; i++, j++) temp[j] = exp[i];
 			temp[j] = '\0';
 
 			insertNum(curNode, atof(temp));
